@@ -1,35 +1,46 @@
-from flask import Flask, request, jsonify
-import json
+from flask import Flask, request, jsonify, make_response
 import os
-
+import csv
 from flask_cors import CORS
+
 app = Flask(__name__)
 CORS(app)
 
-# Filepath to the JSON file
-JSON_FILE = "TimeAndMotionStudy.json"
+# Filepath for the CSV file
+CSV_FILE = "TimeAndMotionStudy.csv"
 
 @app.route('/save-all', methods=['POST'])
-def save_all_to_json():
+def save_all_to_csv():
     data = request.json  # List of tasks
 
-    # If the file doesn't exist, create it
-    if not os.path.exists(JSON_FILE):
-        with open(JSON_FILE, 'w') as file:
-            json.dump([], file)
+    # Write data to the CSV file
+    with open(CSV_FILE, 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        # Write headers
+        csvwriter.writerow(["TaskName", "Duration", "Observations"])
+        # Write rows
+        for task in data:
+            csvwriter.writerow([
+                task.get("TaskName", ""),
+                task.get("Duration", ""),
+                task.get("Observations", "")
+            ])
 
-    # Read existing data
-    with open(JSON_FILE, 'r') as file:
-        existing_data = json.load(file)
+    return jsonify({"message": "Tasks saved to CSV!"}), 200
 
-    # Append new data to existing data
-    existing_data.extend(data)
+@app.route('/download-csv', methods=['GET'])
+def download_csv():
+    # Serve the CSV file for download
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, 'r') as file:
+            csv_content = file.read()
 
-    # Write updated data back to the file
-    with open(JSON_FILE, 'w') as file:
-        json.dump(existing_data, file, indent=4)
-
-    return jsonify({"message": "All tasks saved successfully to JSON!"}), 200
+        response = make_response(csv_content)
+        response.headers["Content-Disposition"] = "attachment; filename=TimeAndMotionStudy.csv"
+        response.headers["Content-Type"] = "text/csv"
+        return response
+    else:
+        return jsonify({"message": "No CSV file found!"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -61,7 +61,7 @@ saveButton.addEventListener("click", () => {
   resetButton.click();
 });
 
-// Save all tasks to JSON
+// Save all tasks to CSV via backend
 saveAllButton.addEventListener("click", () => {
   const rows = document.querySelectorAll("#taskTable tbody tr");
   const data = [];
@@ -75,25 +75,32 @@ saveAllButton.addEventListener("click", () => {
     data.push({ TaskName: taskName, Duration: duration, Observations: observation });
   });
 
-  // Send all data to the backend
-  saveAllToJson(data);
+  saveAllToCsv(data);
 });
 
-const saveAllToJson = async (data) => {
-  const url = "http://127.0.0.1:5000/save-all"; // Backend endpoint for saving all tasks to JSON
+const saveAllToCsv = async (data) => {
+  const saveUrl = "http://127.0.0.1:5000/save-all"; // Backend endpoint for saving data to CSV
+  const downloadUrl = "http://127.0.0.1:5000/download-csv"; // Backend endpoint for downloading CSV
 
   try {
-    const response = await fetch(url, {
+    // Save data to CSV on the server
+    const saveResponse = await fetch(saveUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
-    if (response.ok) {
-      document.getElementById("saveAllStatus").textContent = "All tasks saved successfully to JSON!";
+    if (saveResponse.ok) {
+      document.getElementById("saveAllStatus").textContent = "Tasks saved to CSV on the server! Click to download.";
+
+      // Provide a download link
+      const downloadLink = document.createElement("a");
+      downloadLink.href = downloadUrl;
+      downloadLink.textContent = "Download CSV";
+      downloadLink.download = "TimeAndMotionStudy.csv";
+      document.getElementById("saveAllStatus").appendChild(downloadLink);
     } else {
-      document.getElementById("saveAllStatus").textContent = "Error saving tasks to JSON!";
-      console.error("Error saving all tasks to JSON:", response.statusText);
+      document.getElementById("saveAllStatus").textContent = "Error saving tasks to CSV!";
     }
   } catch (error) {
     document.getElementById("saveAllStatus").textContent = "Error connecting to the server!";

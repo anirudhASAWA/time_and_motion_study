@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time and Motion Study</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Time and Motion Study</h1>
+
+    <!-- Task Input Section -->
+    <div class="task-section">
+      <label for="taskName">Task Name:</label>
+      <input type="text" id="taskName" placeholder="Enter Task Name">
+    </div>
+
+    <!-- Stopwatch Section -->
+    <div class="stopwatch-section">
+      <h2 id="timer">00:00:00</h2>
+      <button id="startButton">Start</button>
+      <button id="stopButton" disabled>Stop</button>
+      <button id="resetButton" disabled>Reset</button>
+    </div>
+
+    <!-- Observation Section -->
+    <div class="observation-section">
+      <label for="observation">Observations:</label>
+      <textarea id="observation" placeholder="Enter your observations here..."></textarea>
+    </div>
+
+    <!-- Save Task Section -->
+    <button id="saveButton">Save Task</button>
+
+    <!-- Task List Section -->
+    <div class="task-list-section">
+      <h2>Task List</h2>
+      <table id="taskTable">
+        <thead>
+          <tr>
+            <th>Task Name</th>
+            <th>Duration</th>
+            <th>Observations</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamic Rows Will Be Added Here -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Save All Tasks to JSON -->
+    <button id="saveAllButton">Save All Tasks to JSON</button>
+    <div id="saveAllStatus" style="color: green; font-weight: bold; margin-top: 10px;"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
